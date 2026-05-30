@@ -128,7 +128,7 @@
             display: none !important;
         }
 
-        /* СТИЛІ ДЛЯ СЛАЙДЕРУ ФОТОГРАФІЙ */
+        /* НАЛАШТУВАННЯ ДЛЯ ПОВНОГО ВІДОБРАЖЕННЯ ФОТО */
         .photo-wrapper {
             position: relative;
             width: 100%;
@@ -141,11 +141,10 @@
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.08);
             transform: rotate(1.5deg);
-            display: none; /* Ховаємо всі карти за замовчуванням */
+            display: none;
             animation: fadeIn 0.5s ease-in-out forwards;
         }
 
-        /* Показуємо тільки активне фото */
         .photo-card.active {
             display: block;
         }
@@ -153,10 +152,11 @@
         .photo-card img {
             width: 100%;
             height: auto;
-            max-height: 280px;
+            max-height: 320px; /* Оптимальна висота, щоб фото поміщалося на екрані телефону */
             border-radius: 12px;
             display: block;
-            object-fit: cover;
+            object-fit: contain; /* Тепер фото ніколи не обрізається, а показується повністю! */
+            background-color: #f7f1e3; /* Легкий приємний фон, якщо фото дуже вузьке */
         }
 
         .photo-desc {
@@ -165,7 +165,7 @@
             font-weight: 500;
             margin-top: 15px;
             line-height: 1.4;
-            min-height: 40px; /* Фіксує висоту для тексту */
+            min-height: 40px;
         }
 
         @keyframes fadeIn {
@@ -173,7 +173,6 @@
             to { opacity: 1; transform: scale(1) rotate(1.5deg); }
         }
 
-        /* Гарне велике привітання */
         .congrats-text {
             font-size: 1.15rem;
             color: #57606f;
@@ -245,7 +244,6 @@
         const photoCards = document.querySelectorAll('.photo-card');
         let currentPhotoIndex = 0;
 
-        // --- ЛОГІКА КНОПКИ "НІ" (Втікання) ---
         function moveButton(e) {
             if (e) e.preventDefault();
             const padding = 40; 
@@ -264,40 +262,27 @@
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('click', moveButton);
 
-        // --- ПЕРЕХОДИ МІЖ ЕКРАНАМИ ---
-        
-        // З 1-го екрану на 2-й (Привітання)
         yesBtn.addEventListener('click', () => {
             quizCard.classList.add('hidden');
             congratsCard.classList.remove('hidden');
-            noBtn.classList.add('hidden'); // Прибираємо кнопку "Ні" назовсім
+            noBtn.classList.add('hidden');
         });
 
-        // З 2-го екрану на 3-й (Початок спогадів)
         startMemoriesBtn.addEventListener('click', () => {
             congratsCard.classList.add('hidden');
             galleryCard.classList.remove('hidden');
         });
 
-        // ЛОГІКА ДЛЯ КНОПКИ "ДАЛІ" В ГАЛЕРЕЇ
         nextPhotoBtn.addEventListener('click', () => {
-            // Ховаємо поточне фото
             photoCards[currentPhotoIndex].classList.remove('active');
-            
-            // Збільшуємо індекс
             currentPhotoIndex++;
 
-            // Перевіряємо, чи є ще фотографії
             if (currentPhotoIndex < photoCards.length) {
-                // Показуємо наступне фото
                 photoCards[currentPhotoIndex].classList.add('active');
-                
-                // Якщо це останнє фото (четверте), міняємо текст на кнопці
                 if (currentPhotoIndex === photoCards.length - 1) {
                     nextPhotoBtn.textContent = "Обійняти! 🥰";
                 }
             } else {
-                // Що робити, коли фотки закінчилися
                 galleryCard.innerHTML = `
                     <h1 style="font-size: 2.2rem; margin-bottom: 15px; color: #ff6b81;">Ще раз з Днем Народження! 🎂</h1>
                     <p style="font-size: 1.2rem; color: #636e72;">Сподіваюсь, тобі сподобався сюрприз! Проведи цей день незабутньо! 💖🌸✨</p>
