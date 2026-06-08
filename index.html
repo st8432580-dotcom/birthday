@@ -128,7 +128,6 @@
             display: none !important;
         }
 
-        /* НАЛАШТУВАННЯ ДЛЯ ПОВНОГО ВІДОБРАЖЕННЯ ФОТО */
         .photo-wrapper {
             position: relative;
             width: 100%;
@@ -152,11 +151,11 @@
         .photo-card img {
             width: 100%;
             height: auto;
-            max-height: 320px; /* Оптимальна висота, щоб фото поміщалося на екрані телефону */
+            max-height: 320px;
             border-radius: 12px;
             display: block;
-            object-fit: contain; /* Тепер фото ніколи не обрізається, а показується повністю! */
-            background-color: #f7f1e3; /* Легкий приємний фон, якщо фото дуже вузьке */
+            object-fit: contain;
+            background-color: #f7f1e3;
         }
 
         .photo-desc {
@@ -182,6 +181,8 @@
     </style>
 </head>
 <body>
+
+    <audio id="bg-music" src="music.mp3" loop></audio>
 
     <div class="card" id="quiz-card">
         <h1>З Днем Народження! 🌸</h1>
@@ -236,6 +237,7 @@
         const yesBtn = document.getElementById('yes-btn');
         const startMemoriesBtn = document.getElementById('start-memories-btn');
         const nextPhotoBtn = document.getElementById('next-photo-btn');
+        const music = document.getElementById('bg-music');
 
         const quizCard = document.getElementById('quiz-card');
         const congratsCard = document.getElementById('congrats-card');
@@ -244,6 +246,7 @@
         const photoCards = document.querySelectorAll('.photo-card');
         let currentPhotoIndex = 0;
 
+        // Втікання кнопки "Ні"
         function moveButton(e) {
             if (e) e.preventDefault();
             const padding = 40; 
@@ -262,10 +265,16 @@
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('click', moveButton);
 
+        // Перехід на екран 2 + запуск музики
         yesBtn.addEventListener('click', () => {
             quizCard.classList.add('hidden');
             congratsCard.classList.remove('hidden');
             noBtn.classList.add('hidden');
+
+            // Запуск треку
+            music.play().catch(error => {
+                console.log("Браузер заблокував автоплей, але після кліку все має працювати:", error);
+            });
         });
 
         startMemoriesBtn.addEventListener('click', () => {
