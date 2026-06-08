@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>З Днем Народження, Красуне! ✨</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -45,6 +46,7 @@
             max-width: 400px;
             position: relative;
             transition: all 0.4s ease-in-out;
+            z-index: 10;
         }
 
         h1 {
@@ -246,6 +248,46 @@
         const photoCards = document.querySelectorAll('.photo-card');
         let currentPhotoIndex = 0;
 
+        // Функція для маленького вибуху конфеті при гортанні фото
+        function fireClickConfetti() {
+            confetti({
+                particleCount: 40,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0, y: 0.8 }
+            });
+            confetti({
+                particleCount: 40,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1, y: 0.8 }
+            });
+        }
+
+        // Функція тривалого великого салюту для фіналу
+        function fireFinalFireworks() {
+            const duration = 4 * 1000; // Салют триватиме 4 секунди
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                // Бабахає в рандомних місцях екрану
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
         // Втікання кнопки "Ні"
         function moveButton(e) {
             if (e) e.preventDefault();
@@ -265,37 +307,47 @@
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('click', moveButton);
 
-        // Перехід на екран 2 + запуск музики
+        // Перехід на екран 2 + музика
         yesBtn.addEventListener('click', () => {
             quizCard.classList.add('hidden');
             congratsCard.classList.remove('hidden');
             noBtn.classList.add('hidden');
 
-            // Запуск треку
             music.play().catch(error => {
-                console.log("Браузер заблокував автоплей, але після кліку все має працювати:", error);
+                console.log("Очікування взаємодії користувача:", error);
             });
+            // Невеликий святковий залп одразу при переході
+            fireClickConfetti();
         });
 
         startMemoriesBtn.addEventListener('click', () => {
             congratsCard.classList.add('hidden');
             galleryCard.classList.remove('hidden');
+            fireClickConfetti();
         });
 
+        // Гортання фото + салюти
         nextPhotoBtn.addEventListener('click', () => {
             photoCards[currentPhotoIndex].classList.remove('active');
             currentPhotoIndex++;
 
             if (currentPhotoIndex < photoCards.length) {
                 photoCards[currentPhotoIndex].classList.add('active');
+                
+                // Стріляємо легким конфеті при кожному перемиканні фото
+                fireClickConfetti();
+
                 if (currentPhotoIndex === photoCards.length - 1) {
                     nextPhotoBtn.textContent = "Обійняти! 🥰";
                 }
             } else {
+                // ФІНАЛЬНИЙ ЕКРАН
                 galleryCard.innerHTML = `
                     <h1 style="font-size: 2.2rem; margin-bottom: 15px; color: #ff6b81;">Ще раз з Днем Народження! 🎂</h1>
                     <p style="font-size: 1.2rem; color: #636e72;">Сподіваюсь, тобі сподобався сюрприз! Проведи цей день незабутньо! 💖🌸✨</p>
                 `;
+                // Бабахаємо потужним тривалим салютом
+                fireFinalFireworks();
             }
         });
     </script>
