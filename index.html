@@ -61,6 +61,14 @@
     max-width: 420px;
     text-align: center;
     position: relative;
+  }
+
+  /* Прибираємо overflow: hidden тільки для першого екрану, щоб кнопка могла вилітати за межі карти */
+  #s1 .card {
+    overflow: visible;
+  }
+
+  #s2 .card, #s3 .card, #s4 .card {
     overflow: hidden;
   }
 
@@ -137,6 +145,7 @@
     justify-content: center;
     position: relative;
     height: 52px;
+    width: 100%;
   }
 
   .btn {
@@ -162,7 +171,7 @@
   }
   .btn-yes:hover { box-shadow: 0 10px 30px rgba(244,114,182,0.6); transform: translateY(-2px); }
 
-  /* Кнопка НІ — тікає по всьому екрану після взаємодії */
+  /* Кнопка НІ — плавне fixed позиціонування */
   .btn-no {
     background: rgba(255,255,255,0.1);
     color: rgba(255,255,255,0.7);
@@ -171,7 +180,8 @@
     touch-action: none;
     min-width: 120px;
     z-index: 9999;
-    transition: left 0.12s cubic-bezier(0.25,1.5,0.5,1), top 0.12s cubic-bezier(0.25,1.5,0.5,1);
+    will-change: top, left;
+    transition: left 0.15s ease-out, top 0.15s ease-out;
   }
 
   .btn-action {
@@ -219,23 +229,29 @@
   }
 
   .photo-frame {
-    background: rgba(255,255,255,0.06);
+    background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 20px;
     padding: 12px;
     margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 324px;
   }
 
+  /* Виправлено: фото тепер не обрізаються взагалі */
   .photo-frame img {
     width: 100%;
+    height: auto;
     max-height: 300px;
     border-radius: 12px;
     display: block;
-    object-fit: cover;
-    object-position: center top;
+    object-fit: contain;
+    background-color: transparent;
   }
 
-  .photo-slot { display: none; }
+  .photo-slot { display: none; width: 100%; }
   .photo-slot.active {
     display: block;
     animation: slideIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
@@ -250,7 +266,7 @@
     font-size: 1rem;
     color: rgba(255,255,255,0.8);
     text-align: center;
-    padding: 8px 4px 4px;
+    padding: 12px 4px 4px;
     line-height: 1.4;
     min-height: 36px;
   }
@@ -422,82 +438,34 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-/* ===== КНОПКА НІ — ТІКАЄ ===== */
+/* ===== КНОПКА НІ — НАДІЙНО ТІКАЄ ПО ВСЬОМУ ЕКРАНУ ===== */
 const noBtn = document.getElementById('noBtn');
 
-function runAway(clientX, clientY) {
-  // Робимо кнопку fixed тільки під час першої спроби втекти, щоб вона не стрибала раніше часу
-  if (noBtn.style.position !== 'fixed') {
-    const rect = noBtn.getBoundingClientRect();
-    noBtn.style.left = rect.left + 'px';
-    noBtn.style.top = rect.top + 'px';
-    noBtn.style.position = 'fixed';
-  }
+function runAway() {
+  const padding = 40; 
+  const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
 
-  const bw = noBtn.offsetWidth;
-  const bh = noBtn.offsetHeight;
-  const pad = 16;
+  let randomX = Math.floor(Math.random() * (maxX - padding)) + padding;
+  let randomY = Math.floor(Math.random() * (maxY - padding)) + padding;
 
-  let nx = noBtn.offsetLeft;
-  let ny = noBtn.offsetTop;
-
-  const cx = noBtn.offsetLeft + bw / 2;
-  const cy = noBtn.offsetTop  + bh / 2;
-
-  let dx = cx - clientX;
-  let dy = cy - clientY;
-  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-
-  const force = 200 + Math.random() * 100;
-  dx = (dx / dist) * force;
-  dy = (dy / dist) * force;
-
-  nx = cx + dx - bw / 2;
-  ny = cy + dy - bh / 2;
-
-  nx = Math.max(pad, Math.min(W - bw - pad, nx));
-  ny = Math.max(pad, Math.min(H - bh - pad, ny));
-
-  noBtn.style.left = Math.round(nx) + 'px';
-  noBtn.style.top  = Math.round(ny) + 'px';
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = randomX + 'px';
+  noBtn.style.top = randomY + 'px';
 }
 
-// ПК — реагуємо на наближення курсора
-document.addEventListener('mousemove', e => {
-  const r = noBtn.getBoundingClientRect();
-  const ZONE = 80; 
-  if (
-    e.clientX > r.left - ZONE && e.clientX < r.right  + ZONE &&
-    e.clientY > r.top  - ZONE && e.clientY < r.bottom + ZONE
-  ) {
-    runAway(e.clientX, e.clientY);
-  }
-});
-
-// Телефон — відстежуємо рух пальця по всьому екрану
-document.addEventListener('touchmove', e => {
-  const touch = e.touches[0];
-  const r = noBtn.getBoundingClientRect();
-  const ZONE = 90;
-  if (
-    touch.clientX > r.left - ZONE && touch.clientX < r.right  + ZONE &&
-    touch.clientY > r.top  - ZONE && touch.clientY < r.bottom + ZONE
-  ) {
-    runAway(touch.clientX, touch.clientY);
-    e.preventDefault(); 
-  }
-}, { passive: false });
-
-// Якщо все ж таки натиснули — тікати
-noBtn.addEventListener('click', e => {
+// ПК курсор
+noBtn.addEventListener('mouseover', runAway);
+// Тач на мобілках
+noBtn.addEventListener('touchstart', (e) => {
   e.preventDefault();
-  runAway(e.clientX || W / 2, e.clientY || H / 2);
-});
-noBtn.addEventListener('touchstart', e => {
-  e.preventDefault();
-  const t = e.touches[0];
-  runAway(t.clientX, t.clientY);
+  runAway();
 }, { passive: false });
+// Клік (про всяк випадок)
+noBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  runAway();
+});
 
 /* ===== CONFETTI ===== */
 function burstConfetti() {
