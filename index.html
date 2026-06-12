@@ -1,355 +1,573 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>З Днем Народження, Красуне! ✨</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>З Днем Народження! 🌸</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #ffeaa7, #ffb8b8, #fad0c4);
-            background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
-            color: #4a4a4a;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            padding: 20px;
-        }
+  :root {
+    --rose: #f472b6;
+    --rose-deep: #db2777;
+    --peach: #fb923c;
+    --lilac: #c084fc;
+    --gold: #f59e0b;
+  }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+    background: #1a0a2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        .card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 40px 25px;
-            border-radius: 30px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(255, 154, 158, 0.3);
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-            transition: all 0.4s ease-in-out;
-            z-index: 10;
-        }
+  #particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 15px;
-            color: #ff6b81;
-            line-height: 1.2;
-        }
+  .screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: all;
+  }
 
-        p {
-            font-size: 1.25rem;
-            margin-bottom: 20px;
-            color: #636e72;
-            line-height: 1.5;
-        }
+  .card {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 28px;
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
 
-        .warning-text {
-            font-size: 1.1rem;
-            color: #ee5253;
-            font-weight: bold;
-            margin-bottom: 35px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: pulse 1.5s infinite;
-        }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(244,114,182,0.12) 0%, rgba(192,132,252,0.08) 50%, rgba(251,146,60,0.1) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
 
-        @keyframes pulse {
-            0% { transform: scale(0.96); opacity: 0.8; }
-            50% { transform: scale(1.04); opacity: 1; }
-            100% { transform: scale(0.96); opacity: 0.8; }
-        }
+  .card::after {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px; bottom: -1px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, var(--rose), var(--lilac), var(--peach));
+    z-index: -1;
+    opacity: 0.5;
+    filter: blur(12px);
+  }
 
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            height: 50px;
-            position: relative;
-            width: 100%;
-        }
+  .emoji-big {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 12px;
+    animation: floatEmoji 3s ease-in-out infinite;
+  }
 
-        .btn {
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
-            transition: all 0.2s;
-        }
+  @keyframes floatEmoji {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
 
-        .btn-yes, .btn-action {
-            background: linear-gradient(135deg, #ff758c, #ff7eb3);
-            color: white;
-            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
-        }
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
 
-        .btn-action {
-            width: 100%;
-            margin-top: 10px;
-            padding: 14px 30px;
-        }
+  .subtitle {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
 
-        .btn-yes:hover, .btn-action:hover {
-            transform: scale(1.03);
-            box-shadow: 0 7px 20px rgba(255, 117, 140, 0.6);
-        }
+  .warning {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--rose);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(244,114,182,0.4);
+    border-radius: 50px;
+    padding: 6px 16px;
+    margin: 16px 0 28px;
+    animation: pulseWarn 2s ease-in-out infinite;
+  }
 
-        .btn-no {
-            background-color: #ffeaa7;
-            color: #d63031;
-            width: 45%;
-            position: absolute;
-            right: 5%;
-            z-index: 999;
-            will-change: top, left;
-        }
+  @keyframes pulseWarn {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(244,114,182,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(244,114,182,0); }
+  }
 
-        .hidden {
-            display: none !important;
-        }
+  .btn-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    position: relative;
+    height: 52px;
+  }
 
-        .photo-wrapper {
-            position: relative;
-            width: 100%;
-            margin-bottom: 20px;
-        }
+  .btn {
+    padding: 14px 28px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
-        .photo-card {
-            background: white;
-            padding: 12px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            transform: rotate(1.5deg);
-            display: none;
-            animation: fadeIn 0.5s ease-in-out forwards;
-        }
+  .btn:active { transform: scale(0.96); }
 
-        .photo-card.active {
-            display: block;
-        }
+  .btn-yes {
+    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(244,114,182,0.45);
+    min-width: 120px;
+  }
+  .btn-yes:hover { box-shadow: 0 10px 30px rgba(244,114,182,0.6); transform: translateY(-2px); }
 
-        .photo-card img {
-            width: 100%;
-            height: auto;
-            max-height: 320px;
-            border-radius: 12px;
-            display: block;
-            object-fit: contain;
-            background-color: #f7f1e3;
-        }
+  /* Кнопка НІ — тікає по всьому екрану після взаємодії */
+  .btn-no {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    white-space: nowrap;
+    touch-action: none;
+    min-width: 120px;
+    z-index: 9999;
+    transition: left 0.12s cubic-bezier(0.25,1.5,0.5,1), top 0.12s cubic-bezier(0.25,1.5,0.5,1);
+  }
 
-        .photo-desc {
-            font-size: 1.15rem;
-            color: #ff6b81;
-            font-weight: 500;
-            margin-top: 15px;
-            line-height: 1.4;
-            min-height: 40px;
-        }
+  .btn-action {
+    background: linear-gradient(135deg, var(--rose), var(--lilac));
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(192,132,252,0.4);
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px 28px;
+    font-size: 1.1rem;
+  }
+  .btn-action:hover { box-shadow: 0 10px 32px rgba(192,132,252,0.6); transform: translateY(-2px); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9) rotate(-2deg); }
-            to { opacity: 1; transform: scale(1) rotate(1.5deg); }
-        }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    margin: 20px 0;
+  }
 
-        .congrats-text {
-            font-size: 1.15rem;
-            color: #57606f;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-    </style>
+  .congrats-body {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .step-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+  }
+  .dot.active {
+    background: var(--rose);
+    width: 22px;
+    border-radius: 4px;
+    box-shadow: 0 0 8px var(--rose);
+  }
+
+  .photo-frame {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .photo-frame img {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    display: block;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .photo-slot { display: none; }
+  .photo-slot.active {
+    display: block;
+    animation: slideIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: scale(0.88) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .photo-caption {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+    padding: 8px 4px 4px;
+    line-height: 1.4;
+    min-height: 36px;
+  }
+
+  .final-emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 16px;
+    animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes popIn {
+    from { transform: scale(0) rotate(-180deg); }
+    to   { transform: scale(1) rotate(0deg); }
+  }
+
+  .final-text {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+  }
+
+  .sparkle {
+    position: absolute;
+    font-size: 1.2rem;
+    animation: twinkle 2s ease-in-out infinite;
+    pointer-events: none;
+    user-select: none;
+  }
+  .sparkle:nth-child(1) { top: 14px; left: 18px; animation-delay: 0s; }
+  .sparkle:nth-child(2) { top: 14px; right: 18px; animation-delay: 0.5s; }
+  .sparkle:nth-child(3) { bottom: 14px; left: 18px; animation-delay: 1s; }
+  .sparkle:nth-child(4) { bottom: 14px; right: 18px; animation-delay: 1.5s; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+</style>
 </head>
 <body>
 
-    <audio id="bg-music" src="music.mp3" loop></audio>
+<canvas id="particles"></canvas>
+<audio id="music" src="music.mp3" loop></audio>
 
-    <div class="card" id="quiz-card">
-        <h1>З Днем Народження! 🌸</h1>
-        <p>Тобі вже виповнилося 17?</p>
-        <div class="warning-text">💖 Не натискай ТАК!</div>
-        
-        <div class="btn-container">
-            <button class="btn btn-yes" id="yes-btn">Так</button>
-            <button class="btn btn-no" id="no-btn">Ні</button>
-        </div>
+<div class="screen active" id="s1">
+  <div class="card">
+    <span class="sparkle">✦</span><span class="sparkle">✦</span>
+    <span class="sparkle">✦</span><span class="sparkle">✦</span>
+    <span class="emoji-big">🌸</span>
+    <h1>З Днем Народження!</h1>
+    <p class="subtitle">Тобі вже виповнилося 17?</p>
+    <span class="warning">💖 Не натискай ТАК!</span>
+    <div class="btn-row">
+      <button class="btn btn-yes" id="yesBtn">Так ✨</button>
+      <button class="btn btn-no" id="noBtn">Ні 🙅</button>
     </div>
+  </div>
+</div>
 
-    <div class="card hidden" id="congrats-card">
-        <h1>Зі святом! 🎉✨</h1>
-        <div class="congrats-text">
-            <p>Ти все одно натиснула "Так"! І це найкращий вибір! 😉</p>
-            <p>Бажаю тобі нереального щастя, щирих посмішок, вірних друзів поруч і щоб усе, про що ти мрієш, здійснювалося на раз-два! 💖</p>
-        </div>
-        <button class="btn btn-action" id="start-memories-btn">Освіжимо твої спогади? 🥺✨</button>
+<div class="screen" id="s2">
+  <div class="card">
+    <span class="sparkle">🌟</span><span class="sparkle">🌟</span>
+    <span class="sparkle">🌟</span><span class="sparkle">🌟</span>
+    <span class="emoji-big">🎉</span>
+    <h1>Зі святом!</h1>
+    <div class="divider"></div>
+    <p class="congrats-body">Ти все одно натиснула "Так"! І це найкращий вибір! 😉</p>
+    <p class="congrats-body" style="margin-top:10px;">Бажаю нереального щастя, щирих посмішок, вірних друзів поруч — і щоб усе, про що мрієш, здійснювалося на раз-два! 💖</p>
+    <button class="btn btn-action" id="memoriesBtn">Освіжимо твої спогади? 🥺✨</button>
+  </div>
+</div>
+
+<div class="screen" id="s3">
+  <div class="card">
+    <h1 style="font-size:1.5rem; margin-bottom:16px;">Твої спогади 💖</h1>
+    <div class="step-dots" id="dots"></div>
+    <div class="photo-frame">
+      <div class="photo-slot active" data-i="0">
+        <img src="photo1.jpg" alt="Фото 1">
+        <p class="photo-caption">Найкрасивіша іменинниця! 😍</p>
+      </div>
+      <div class="photo-slot" data-i="1">
+        <img src="photo2.jpg" alt="Фото 2">
+        <p class="photo-caption">Завжди залишайся такою ж життєрадісною! ✨</p>
+      </div>
+      <div class="photo-slot" data-i="2">
+        <img src="photo3.jpg" alt="Фото 3">
+        <p class="photo-caption">Дивись, ти тут як обезьянка 🐒😂</p>
+      </div>
+      <div class="photo-slot" data-i="3">
+        <img src="photo4.jpg" alt="Фото 4">
+        <p class="photo-caption">А тут ти зовсім маленька ще була 🥺 Малеча 🥰</p>
+      </div>
     </div>
+    <button class="btn btn-action" id="nextBtn">Далі ✨</button>
+  </div>
+</div>
 
-    <div class="card hidden" id="gallery-card">
-        <h1 style="font-size: 1.8rem; margin-bottom: 20px;">Твої спогади 💖</h1>
-        
-        <div class="photo-wrapper">
-            <div class="photo-card active" data-index="1">
-                <img src="photo1.jpg" alt="Фото 1">
-                <div class="photo-desc">Найкрасивіша іменинниця! 😍</div>
-            </div>
+<div class="screen" id="s4">
+  <div class="card">
+    <span class="sparkle">⭐</span><span class="sparkle">⭐</span>
+    <span class="sparkle">⭐</span><span class="sparkle">⭐</span>
+    <span class="final-emoji">🎂</span>
+    <h1>Ще раз з Днем Народження!</h1>
+    <div class="divider"></div>
+    <p class="final-text">Сподіваюсь, тобі сподобався сюрприз!<br>Проведи цей день незабутньо! 💖🌸✨</p>
+  </div>
+</div>
 
-            <div class="photo-card" data-index="2">
-                <img src="photo2.jpg" alt="Фото 2">
-                <div class="photo-desc">Завжди залишайся такою ж життєрадісною! ✨</div>
-            </div>
+<script>
+/* ===== PARTICLES ===== */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H;
 
-            <div class="photo-card" data-index="3">
-                <img src="photo3.jpg" alt="Фото 3">
-                <div class="photo-desc">Дивись, ти тут як обезьянка 🐒😂</div>
-            </div>
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
 
-            <div class="photo-card" data-index="4">
-                <img src="photo4.jpg" alt="Фото 4">
-                <div class="photo-desc">А тут ти зовсім маленька ще була 🥺 Малеча 🥰</div>
-            </div>
-        </div>
+const COLORS = ['#f472b6','#c084fc','#fb923c','#fbbf24','#a78bfa','#f9a8d4'];
 
-        <button class="btn btn-action" id="next-photo-btn">Далі ✨</button>
-    </div>
+class Particle {
+  constructor(init) { this.reset(init); }
+  reset(init) {
+    this.x = Math.random() * W;
+    this.y = init ? Math.random() * H : H + 10;
+    this.r = 1 + Math.random() * 2.5;
+    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    this.speed = 0.3 + Math.random() * 0.5;
+    this.drift = (Math.random() - 0.5) * 0.4;
+    this.opacity = 0.3 + Math.random() * 0.6;
+    this.tp = Math.random() * Math.PI * 2;
+    this.ts = 0.01 + Math.random() * 0.02;
+  }
+  update() {
+    this.y -= this.speed;
+    this.x += this.drift;
+    this.tp += this.ts;
+    if (this.y < -10) this.reset(false);
+  }
+  draw() {
+    const o = this.opacity * (0.6 + 0.4 * Math.sin(this.tp));
+    ctx.save();
+    ctx.globalAlpha = o;
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
 
-    <script>
-        const noBtn = document.getElementById('no-btn');
-        const yesBtn = document.getElementById('yes-btn');
-        const startMemoriesBtn = document.getElementById('start-memories-btn');
-        const nextPhotoBtn = document.getElementById('next-photo-btn');
-        const music = document.getElementById('bg-music');
+const particles = Array.from({length: 90}, (_, i) => new Particle(i < 90));
 
-        const quizCard = document.getElementById('quiz-card');
-        const congratsCard = document.getElementById('congrats-card');
-        const galleryCard = document.getElementById('gallery-card');
+(function loop() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(loop);
+})();
 
-        const photoCards = document.querySelectorAll('.photo-card');
-        let currentPhotoIndex = 0;
+/* ===== SCREEN SWITCH ===== */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-        // Функція для маленького вибуху конфеті при гортанні фото
-        function fireClickConfetti() {
-            confetti({
-                particleCount: 40,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0, y: 0.8 }
-            });
-            confetti({
-                particleCount: 40,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1, y: 0.8 }
-            });
-        }
+/* ===== КНОПКА НІ — ТІКАЄ ===== */
+const noBtn = document.getElementById('noBtn');
 
-        // Функція тривалого великого салюту для фіналу
-        function fireFinalFireworks() {
-            const duration = 4 * 1000; // Салют триватиме 4 секунди
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+function runAway(clientX, clientY) {
+  // Робимо кнопку fixed тільки під час першої спроби втекти, щоб вона не стрибала раніше часу
+  if (noBtn.style.position !== 'fixed') {
+    const rect = noBtn.getBoundingClientRect();
+    noBtn.style.left = rect.left + 'px';
+    noBtn.style.top = rect.top + 'px';
+    noBtn.style.position = 'fixed';
+  }
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+  const bw = noBtn.offsetWidth;
+  const bh = noBtn.offsetHeight;
+  const pad = 16;
 
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
+  let nx = noBtn.offsetLeft;
+  let ny = noBtn.offsetTop;
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
+  const cx = noBtn.offsetLeft + bw / 2;
+  const cy = noBtn.offsetTop  + bh / 2;
 
-                const particleCount = 50 * (timeLeft / duration);
-                // Бабахає в рандомних місцях екрану
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
+  let dx = cx - clientX;
+  let dy = cy - clientY;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-        // Втікання кнопки "Ні"
-        function moveButton(e) {
-            if (e) e.preventDefault();
-            const padding = 40; 
-            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+  const force = 200 + Math.random() * 100;
+  dx = (dx / dist) * force;
+  dy = (dy / dist) * force;
 
-            let randomX = Math.floor(Math.random() * (maxX - padding)) + padding;
-            let randomY = Math.floor(Math.random() * (maxY - padding)) + padding;
+  nx = cx + dx - bw / 2;
+  ny = cy + dy - bh / 2;
 
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
-        }
+  nx = Math.max(pad, Math.min(W - bw - pad, nx));
+  ny = Math.max(pad, Math.min(H - bh - pad, ny));
 
-        noBtn.addEventListener('touchstart', moveButton, { passive: false });
-        noBtn.addEventListener('mouseover', moveButton);
-        noBtn.addEventListener('click', moveButton);
+  noBtn.style.left = Math.round(nx) + 'px';
+  noBtn.style.top  = Math.round(ny) + 'px';
+}
 
-        // Перехід на екран 2 + музика
-        yesBtn.addEventListener('click', () => {
-            quizCard.classList.add('hidden');
-            congratsCard.classList.remove('hidden');
-            noBtn.classList.add('hidden');
+// ПК — реагуємо на наближення курсора
+document.addEventListener('mousemove', e => {
+  const r = noBtn.getBoundingClientRect();
+  const ZONE = 80; 
+  if (
+    e.clientX > r.left - ZONE && e.clientX < r.right  + ZONE &&
+    e.clientY > r.top  - ZONE && e.clientY < r.bottom + ZONE
+  ) {
+    runAway(e.clientX, e.clientY);
+  }
+});
 
-            music.play().catch(error => {
-                console.log("Очікування взаємодії користувача:", error);
-            });
-            // Невеликий святковий залп одразу при переході
-            fireClickConfetti();
-        });
+// Телефон — відстежуємо рух пальця по всьому екрану
+document.addEventListener('touchmove', e => {
+  const touch = e.touches[0];
+  const r = noBtn.getBoundingClientRect();
+  const ZONE = 90;
+  if (
+    touch.clientX > r.left - ZONE && touch.clientX < r.right  + ZONE &&
+    touch.clientY > r.top  - ZONE && touch.clientY < r.bottom + ZONE
+  ) {
+    runAway(touch.clientX, touch.clientY);
+    e.preventDefault(); 
+  }
+}, { passive: false });
 
-        startMemoriesBtn.addEventListener('click', () => {
-            congratsCard.classList.add('hidden');
-            galleryCard.classList.remove('hidden');
-            fireClickConfetti();
-        });
+// Якщо все ж таки натиснули — тікати
+noBtn.addEventListener('click', e => {
+  e.preventDefault();
+  runAway(e.clientX || W / 2, e.clientY || H / 2);
+});
+noBtn.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  runAway(t.clientX, t.clientY);
+}, { passive: false });
 
-        // Гортання фото + салюти
-        nextPhotoBtn.addEventListener('click', () => {
-            photoCards[currentPhotoIndex].classList.remove('active');
-            currentPhotoIndex++;
+/* ===== CONFETTI ===== */
+function burstConfetti() {
+  const colors = ['#f472b6','#c084fc','#fb923c','#fbbf24'];
+  confetti({ particleCount: 50, angle: 60,  spread: 60, origin: { x: 0, y: 0.85 }, colors });
+  confetti({ particleCount: 50, angle: 120, spread: 60, origin: { x: 1, y: 0.85 }, colors });
+}
 
-            if (currentPhotoIndex < photoCards.length) {
-                photoCards[currentPhotoIndex].classList.add('active');
-                
-                // Стріляємо легким конфеті при кожному перемиканні фото
-                fireClickConfetti();
+function finalFireworks() {
+  const end = Date.now() + 4500;
+  const colors = ['#f472b6','#c084fc','#fb923c','#fbbf24','#a78bfa'];
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  (function frame() {
+    if (Date.now() > end) return;
+    const pc = 60 * ((end - Date.now()) / 4500);
+    confetti({ startVelocity: 35, spread: 360, ticks: 70, zIndex: 100, particleCount: pc, origin: { x: rnd(0.1, 0.35), y: rnd(-0.1, 0.4) }, colors });
+    confetti({ startVelocity: 35, spread: 360, ticks: 70, zIndex: 100, particleCount: pc, origin: { x: rnd(0.65, 0.9), y: rnd(-0.1, 0.4) }, colors });
+    setTimeout(frame, 220);
+  })();
+}
 
-                if (currentPhotoIndex === photoCards.length - 1) {
-                    nextPhotoBtn.textContent = "Обійняти! 🥰";
-                }
-            } else {
-                // ФІНАЛЬНИЙ ЕКРАН
-                galleryCard.innerHTML = `
-                    <h1 style="font-size: 2.2rem; margin-bottom: 15px; color: #ff6b81;">Ще раз з Днем Народження! 🎂</h1>
-                    <p style="font-size: 1.2rem; color: #636e72;">Сподіваюсь, тобі сподобався сюрприз! Проведи цей день незабутньо! 💖🌸✨</p>
-                `;
-                // Бабахаємо потужним тривалим салютом
-                fireFinalFireworks();
-            }
-        });
-    </script>
+/* ===== SCREEN 1 → 2 ===== */
+document.getElementById('yesBtn').addEventListener('click', () => {
+  noBtn.style.display = 'none';
+  showScreen('s2');
+  burstConfetti();
+  document.getElementById('music').play().catch(() => {});
+});
+
+/* ===== SCREEN 2 → 3 ===== */
+document.getElementById('memoriesBtn').addEventListener('click', () => {
+  buildDots();
+  showScreen('s3');
+  burstConfetti();
+});
+
+/* ===== GALLERY ===== */
+const slots = document.querySelectorAll('.photo-slot');
+const nextBtn = document.getElementById('nextBtn');
+let cur = 0;
+
+function buildDots() {
+  const el = document.getElementById('dots');
+  el.innerHTML = '';
+  slots.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    el.appendChild(d);
+  });
+}
+
+function updateDots() {
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' + (i === cur ? ' active' : '');
+  });
+}
+
+nextBtn.addEventListener('click', () => {
+  slots[cur].classList.remove('active');
+  cur++;
+  if (cur < slots.length) {
+    slots[cur].classList.add('active');
+    updateDots();
+    burstConfetti();
+    if (cur === slots.length - 1) nextBtn.textContent = 'Обійняти! 🥰';
+  } else {
+    showScreen('s4');
+    finalFireworks();
+  }
+});
+</script>
 </body>
 </html>
